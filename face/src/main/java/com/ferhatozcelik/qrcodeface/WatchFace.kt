@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.ferhatozcelik.qrcodeface
 
 import android.content.BroadcastReceiver

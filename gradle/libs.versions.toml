@@ -1,0 +1,58 @@
+[versions]
+# Build tooling
+agp = "8.13.2"
+kotlin = "2.2.21"
+
+# Android SDK
+compileSdk = "36"
+targetSdk = "36"
+minSdkMobile = "24"
+minSdkWear = "23"
+minSdkFace = "30"
+
+# AndroidX / Google
+coreKtx = "1.16.0"
+appcompat = "1.7.1"
+material = "1.12.0"
+constraintlayout = "2.2.1"
+recyclerview = "1.4.0"
+viewpager = "1.0.0"
+cardview = "1.0.0"
+wear = "1.4.0"
+percentlayout = "1.0.0"
+playServicesWearable = "19.0.0"
+
+# Third-party
+gson = "2.11.0"
+zxing = "3.5.3"
+zxingEmbedded = "4.3.0"
+carouselPicker = "v1.2"
+
+# Wear shared libraries / legacy (still AndroidX-based) helpers
+wearableSupport = "2.9.0"
+wearableShared = "2.9.0"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+androidx-viewpager = { group = "androidx.viewpager", name = "viewpager", version.ref = "viewpager" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+androidx-percentlayout = { group = "androidx.percentlayout", name = "percentlayout", version.ref = "percentlayout" }
+androidx-wear = { group = "androidx.wear", name = "wear", version.ref = "wear" }
+
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+zxing-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingEmbedded" }
+carousel-picker = { group = "com.github.GoodieBag", name = "CarouselPicker", version.ref = "carouselPicker" }
+
+wearable-support = { group = "com.google.android.support", name = "wearable", version.ref = "wearableSupport" }
+wearable-shared = { group = "com.google.android.wearable", name = "wearable", version.ref = "wearableShared" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
