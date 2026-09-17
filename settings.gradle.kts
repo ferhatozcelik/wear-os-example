@@ -26,3 +26,4 @@ rootProject.name = "Wear App Example"
 include(":mobile")
 include(":wear")
 include(":face")
+include(":common")

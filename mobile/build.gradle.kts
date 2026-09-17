@@ -43,6 +43,8 @@ dependencies {
     // Bundle the companion Wear OS app inside the phone APK.
     wearApp(project(":wear"))
 
+    implementation(project(":common"))
+
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.recyclerview)

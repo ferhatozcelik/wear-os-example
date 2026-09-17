@@ -24,7 +24,8 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
-import com.google.gson.Gson;
+import com.ferhatozcelik.wear.example.common.Data;
+import com.ferhatozcelik.wear.example.common.WearDataStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ import com.ferhatozcelik.mycodes.R;
 
 public class ListRecyclerViewAdapter extends RecyclerView.Adapter<ListRecyclerViewAdapter.ViewHolder> {
 
-    String datapath = "/data_path";
+    String datapath = WearDataStore.DATA_PATH;
     private List<Data> mData;
     private LayoutInflater mInflater;
     private Context context;
@@ -103,11 +104,7 @@ public class ListRecyclerViewAdapter extends RecyclerView.Adapter<ListRecyclerVi
 
     @SuppressLint("NotifyDataSetChanged")
     private void saveData(List<Data> dataList) {
-        Gson gson = new Gson();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String json = gson.toJson(dataList);
-        editor.putString("dataList", json);
-        editor.apply();
+        WearDataStore.save(sharedPreferences, dataList);
         sendData(dataList);
         notifyDataSetChanged();
     }
@@ -115,16 +112,9 @@ public class ListRecyclerViewAdapter extends RecyclerView.Adapter<ListRecyclerVi
 
     private void sendData(List<Data> dataList) {
         PutDataMapRequest dataMap = PutDataMapRequest.create(datapath);
-        ArrayList<DataMap> itemArray = new ArrayList<>();
-        for(Data item : dataList) {
-            DataMap dataMapp = new DataMap();
-            dataMapp.putString("title", item.getTitle());
-            dataMapp.putString("data", item.getData());
-            dataMapp.putString("image", item.getImage());
-            itemArray.add(dataMapp);
-        }
+        ArrayList<DataMap> itemArray = WearDataStore.toDataMapList(dataList);
 
-        dataMap.getDataMap().putDataMapArrayList("message", itemArray);
+        dataMap.getDataMap().putDataMapArrayList(WearDataStore.KEY_MESSAGE, itemArray);
         PutDataRequest request = dataMap.asPutDataRequest();
         request.setUrgent();
 

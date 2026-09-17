@@ -1,7 +1,8 @@
-package com.ferhatozcelik.mycodes;
+package com.ferhatozcelik.wear.example.common;
 
-import android.graphics.Bitmap;
-
+/**
+ * Shared QR code entry exchanged between the phone and the Wear OS app.
+ */
 public class Data {
 
     String title;
@@ -15,7 +16,6 @@ public class Data {
     }
 
     public Data() {
-
     }
 
     public String getImage() {

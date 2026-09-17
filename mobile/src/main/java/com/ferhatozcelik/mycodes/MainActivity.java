@@ -39,8 +39,8 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.ferhatozcelik.wear.example.common.Data;
+import com.ferhatozcelik.wear.example.common.WearDataStore;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.NotFoundException;
@@ -52,7 +52,6 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +63,7 @@ import in.goodiebag.carouselpicker.CarouselPicker;
 public class MainActivity extends AppCompatActivity implements DataClient.OnDataChangedListener {
 
     String TAG = "Mobile_MainActivity";
-    String datapath = "/data_path";
+    String datapath = WearDataStore.DATA_PATH;
     Button sendbtn;
     Button addManual;
     Button addTakeCamera;
@@ -95,16 +94,8 @@ public class MainActivity extends AppCompatActivity implements DataClient.OnData
 
         itemListMobile = new ArrayList<>();
 
-        sharedPreferences = getSharedPreferences("Shared_Preferences", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("dataList", null);
-
-        Type type = new TypeToken<ArrayList<Data>>() {}.getType();
-        itemListMobile = gson.fromJson(json, type);
-
-        if (itemListMobile == null) {
-            itemListMobile = new ArrayList<>();
-        }
+        sharedPreferences = getSharedPreferences(WearDataStore.PREFS_NAME, MODE_PRIVATE);
+        itemListMobile = new ArrayList<>(WearDataStore.load(sharedPreferences));
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setHasFixedSize(true);
@@ -377,27 +368,16 @@ public class MainActivity extends AppCompatActivity implements DataClient.OnData
 
     @SuppressLint("NotifyDataSetChanged")
     private void saveData(List<Data> dataList) {
-        Gson gson = new Gson();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String json = gson.toJson(dataList);
-        editor.putString("dataList", json);
-        editor.apply();
+        WearDataStore.save(sharedPreferences, dataList);
         mAdapter.notifyDataSetChanged();
     }
 
 
     private void sendData(List<Data> dataList) {
         PutDataMapRequest dataMap = PutDataMapRequest.create(datapath);
-        ArrayList<DataMap> itemArray = new ArrayList<>();
-        for(Data item : dataList) {
-            DataMap dataMapp = new DataMap();
-            dataMapp.putString("title", item.getTitle());
-            dataMapp.putString("data", item.getData());
-            dataMapp.putString("image", item.getImage());
-            itemArray.add(dataMapp);
-        }
+        ArrayList<DataMap> itemArray = WearDataStore.toDataMapList(dataList);
 
-        dataMap.getDataMap().putDataMapArrayList("message", itemArray);
+        dataMap.getDataMap().putDataMapArrayList(WearDataStore.KEY_MESSAGE, itemArray);
         PutDataRequest request = dataMap.asPutDataRequest();
         request.setUrgent();
 

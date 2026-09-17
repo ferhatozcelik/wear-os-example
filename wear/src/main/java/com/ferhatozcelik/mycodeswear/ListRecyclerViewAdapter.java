@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ferhatozcelik.mycodeswear.R;
+import com.ferhatozcelik.wear.example.common.Data;
 
 import java.util.ArrayList;
 import java.util.List;

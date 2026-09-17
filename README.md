@@ -5,6 +5,7 @@ around a phone app:
 
 | Module | Type | Package | What it does |
 | --- | --- | --- | --- |
+| `:common` | library | `com.ferhatozcelik.wear.example.common` | Shared QR code model (`Data`) and Wearable Data Layer / `SharedPreferences` helpers used by both the phone and watch apps. |
 | `:mobile` | phone app | `com.ferhatozcelik.mycodes` | Lets you collect codes (QR/barcode scans, gallery images or manual entries) and syncs them to the watch over the Wearable Data Layer. |
 | `:wear` | Wear OS app | `com.ferhatozcelik.mycodeswear` | Receives the synced list and renders any entry as a QR code on the watch. |
 | `:face` | watch face | `com.ferhatozcelik.qrcodeface` | A simple digital watch face demonstrating `CanvasWatchFaceService`. |
@@ -14,6 +15,10 @@ Wear OS**, using the `/data_path` data item. The phone APK bundles the watch APK
 `wearApp` configuration, so installing the phone app also installs the watch app on a
 paired device.
 
+The shared pieces live in the `:common` library: the `Data` model plus `WearDataStore`,
+which wraps the `/data_path` constant, the `SharedPreferences` (Gson JSON) persistence and
+the `Data` ⇄ `DataMap` conversions used by both apps.
+
 ## Screenshots
 
 _Add your own screenshots here._
@@ -22,6 +27,10 @@ _Add your own screenshots here._
 
 ```
 wear-os-example/
+├── common/   # :common — shared library (Java)
+│   └── src/main/java/com/ferhatozcelik/wear/example/common/
+│       ├── Data.java           # shared QR code model
+│       └── WearDataStore.java  # Wearable Data Layer + SharedPreferences helpers
 ├── mobile/   # :mobile — companion phone application (Java)
 ├── wear/     # :wear   — Wear OS application (Java)
 │   └── src/main/java/com/ferhatozcelik/mycodeswear/
@@ -66,6 +75,26 @@ To install the phone app and its bundled watch app on a paired device/emulator:
 
 ```bash
 ./gradlew :mobile:installDebug
+```
+
+## Library module
+
+The shared model and Wearable Data Layer helpers are packaged as the `:common` Android
+library (`com.ferhatozcelik:wear-common`). Publish it to your local Maven repository and
+consume it from another project:
+
+```bash
+./gradlew :common:publishToMavenLocal -PVERSION_NAME=1.0.0
+```
+
+```kotlin
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    implementation("com.ferhatozcelik:wear-common:1.0.0")
+}
 ```
 
 ## Notes

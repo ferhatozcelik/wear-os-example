@@ -40,6 +40,8 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":common"))
+
     implementation(libs.androidx.wear)
     implementation(libs.wearable.support)
     implementation(libs.androidx.appcompat)

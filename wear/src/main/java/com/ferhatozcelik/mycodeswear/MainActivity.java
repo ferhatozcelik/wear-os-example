@@ -27,10 +27,9 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.ferhatozcelik.wear.example.common.Data;
+import com.ferhatozcelik.wear.example.common.WearDataStore;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class MainActivity extends WearableActivity implements
     private final static String TAG = "Wear MainActivity";
     private TextView mTextView;
     private RecyclerView mRecyclerView;
-    String datapath = "/data_path";
+    String datapath = WearDataStore.DATA_PATH;
     ArrayList<Data> itemList;
     ArrayList<DataMap> itemArray ;
 
@@ -55,19 +54,8 @@ public class MainActivity extends WearableActivity implements
         setContentView(R.layout.activity_main);
 
         mTextView = findViewById(R.id.text);
-        sharedPreferences = getSharedPreferences("Shared_Preferences", MODE_PRIVATE);
-        itemList = new ArrayList<>();
-
-        Gson gson = new Gson();
-
-        String json = sharedPreferences.getString("dataList", null);
-
-        Type type = new TypeToken<ArrayList<Data>>() {}.getType();
-        itemList = gson.fromJson(json, type);
-
-        if (itemList == null) {
-            itemList = new ArrayList<>();
-        }
+        sharedPreferences = getSharedPreferences(WearDataStore.PREFS_NAME, MODE_PRIVATE);
+        itemList = new ArrayList<>(WearDataStore.load(sharedPreferences));
 
         mRecyclerView = findViewById(R.id.codesList);
         mLayoutManager = new LinearLayoutManager(this);
@@ -113,19 +101,9 @@ public class MainActivity extends WearableActivity implements
         Toast.makeText(MainActivity.this, "Data Syncing...", Toast.LENGTH_SHORT).show();
         itemList.clear();
         DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
-        itemArray = dataMapItem.getDataMap().getDataMapArrayList("message");
-        for(DataMap item : itemArray) {
-            Data data = new Data();
-            data.setTitle(item.getString("title"));
-            data.setData(item.getString("data"));
-            data.setImage(item.getString("image"));
-            itemList.add(data);
-        }
-        Gson gson = new Gson();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String json = gson.toJson(itemList);
-        editor.putString("dataList", json);
-        editor.apply();
+        itemArray = dataMapItem.getDataMap().getDataMapArrayList(WearDataStore.KEY_MESSAGE);
+        itemList.addAll(WearDataStore.fromDataMapList(itemArray));
+        WearDataStore.save(sharedPreferences, itemList);
         mAdapter.notifyDataSetChanged();
 
     }
@@ -133,7 +111,7 @@ public class MainActivity extends WearableActivity implements
 
     private void sendData(String message) {
         PutDataMapRequest dataMap = PutDataMapRequest.create(datapath);
-        dataMap.getDataMap().putString("message", message);
+        dataMap.getDataMap().putString(WearDataStore.KEY_MESSAGE, message);
         PutDataRequest request = dataMap.asPutDataRequest();
         request.setUrgent();
 
